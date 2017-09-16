@@ -1,3 +1,4 @@
+<!--
 
 //MARK: Character Category Constructor
 function characterCategory(charCodes, similarCharacterCodes){
@@ -54,6 +55,8 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
     var enabledCategories = [];
     //holds the characters that compose the password
     var password = [];
+    //
+    var passwordString = "";
 
     //determine which character code arrays to use; 'candidates' are the character codes that may be contributed to the password
     if(excludeSimilarCharacters){
@@ -96,12 +99,13 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
     for(category in enabledCategories){
         if(category.count == 0){
             var indexWithGreatestCount = 0;
-            //determine the index of the element in enabledCategories with the greatest account and assign it to indexWithGreatestCount
+            //determine the index of the element in enabledCategories with the greatest count and assign it to indexWithGreatestCount
             for(i=1;i<enabledCategories.length;i++){
                 if(enabledCategories[i] > enabledCategories[i-1]){
                     indexWithGreatestCount = i;
                 }
             }
+            //FLAGGED FOR REVISION
             category.count = Number(1+(enabledCategories[indexWithGreatestCount].count)/2)*Math.random();
             enabledCategories[indexWithGreatestCount].count -= category.count;
         }
@@ -113,8 +117,6 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
             password.push(enabledCategories[i].candidates[Math.floor(Math.random()*enabledCategories[i].candidates.length)]);
         }
     }
-
-    //WORKING UP TO THIS POINT
 
     //shuffle "passwords" via 
     var currentIndex = password.length, temporaryValue, randomIndex;
@@ -132,10 +134,16 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
         password[randomIndex] = temporaryValue;
     }
 
-
     //peace day read zit stance
-    return password;
+    for(i=0;i<password.length;i++){
+        passwordString+=String.fromCharCode(password[i]);
+    }
+
+    //correct '<' and '>' for html
+    passwordString = passwordString.replace("<","&#60;");
+    passwordString = passwordString.replace(">","&#62;");
+
+    return passwordString;
 }
 
-var myPassword = generatePassword(20, true, true, true, false, true);
-
+-->
