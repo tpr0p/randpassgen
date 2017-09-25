@@ -23,24 +23,15 @@ function characterCategory(charCodes, similarCharacterCodes){
 }
 
 //MARK: Character Lists
-
-/*
-lowercase alphabet: 97...122
-uppercase alphabet: 65...90
-numbers (0->9): 48...57
-basic symbols: 33,64,35,36,37,94,38,42,40,41,45,95,43,61,63
-b symbols: !@#$%^&*()-_+=?
-amgbiguous symbols: 123,124,91,93,124,92,47,58,59,34,39,60,62,44,46
-a symbols: {}[]|\/:;"'<>,.
-similar characters: 111,79,48,108,76,105,73,39,34,124,44,46,58,59
-s chars: oO0lLiI'"|,.:;
-*/
-
 const lowercaseCodes = [97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122];
 const uppercaseCodes = [65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90];
+//0 -> 9
 const numberCodes = [48,49,50,51,52,53,54,55,56,57];
+//basic symbols: !@#$%^&*()-_+=?
 const basicSymbolCodes = [33, 64, 35, 36, 37, 94, 38, 42, 40, 41, 45, 95, 43, 61, 63];
+//ambiguous symbols: {}[]|\/:;"'<>,.
 const ambiguousSymbolCodes = [123, 125, 91, 93, 124, 92, 47, 58, 59, 34, 39, 60, 62, 44, 46];
+//similar characters: oO0lLiI'"|,.:;
 const similarCharacterCodes = [111, 79, 48, 108, 76, 105, 73, 39, 34, 124, 44, 46, 58, 59];
 
 var lowercase = new characterCategory(lowercaseCodes, similarCharacterCodes);
@@ -51,11 +42,19 @@ var ambiguousSymbols = new characterCategory(ambiguousSymbolCodes, similarCharac
 
 //MARK: Password Generation
 function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basicSymbolsEnabled, ambiguousSymbolsEnabled, excludeSimilarCharacters) {
+    
+    //reset characterCategory counts
+    lowercase.count = 0;
+    uppercase.count = 0;
+    numbers.count = 0;
+    basicSymbols.count = 0;
+    ambiguousSymbols.count = 0;
+    
     //enabledCategories holds all characterCategories that may contribute candidates to the password
     var enabledCategories = [];
     //holds the characters that compose the password
     var password = [];
-    //
+    // the elements of password converted from charCode to String
     var passwordString = "";
 
     //determine which character code arrays to use; 'candidates' are the character codes that may be contributed to the password
@@ -118,17 +117,13 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
         }
     }
 
-    //shuffle "passwords" via 
+    //shuffle "password"
     var currentIndex = password.length, temporaryValue, randomIndex;
-    
-    // While there remain elements to shuffle...
+
     while (0 !== currentIndex) {
-    
-        // Pick a remaining element...
+        //pick an element (descending order from end of the array) and swap it with another element--that is "randomly" chosen
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-    
-        // And swap it with the current element.
         temporaryValue = password[currentIndex];
         password[currentIndex] = password[randomIndex];
         password[randomIndex] = temporaryValue;
@@ -139,9 +134,11 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
         passwordString+=String.fromCharCode(password[i]);
     }
 
-    //correct '<' and '>' for html
-    passwordString = passwordString.replace("<","&#60;");
-    passwordString = passwordString.replace(">","&#62;");
+    //correct '<' and '>' for html if "passwordString" will be output to the html document via document.write
+    if(false){
+        passwordString = passwordString.replace("<","&#60;");
+        passwordString = passwordString.replace(">","&#62;");
+    }
 
     return passwordString;
 }

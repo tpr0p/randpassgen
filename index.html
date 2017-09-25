@@ -1,13 +1,74 @@
 <!DOCTYPE html>
+<!-- TODO:
+- restrict number input for password length
+- make this baby look purty with some css
+- 
+-->
+
 <html>
     <head>
+        <style>
+            .numberInput{
+                width: 80px;
+            }
+            .passwordTextOutput{
+                width: 400px;
+            }
+        </style>
+
+        <!-- import generatePassword.js, which controls passwordGeneration-->
         <script type="text/javascript" src="generatePassword.js">
-            
+        </script>
+
+        <script type="text/javascript">
+            //define function to pass relevant form inputs into generatePassword
+            function generatePasswordByInput(){
+                var passwordIO = document.getElementById("passwordIO");
+                var passwordLength = 0, uppercaseEnabled = false, numbersEnabled = false, basicSymbolsEnabled = false, ambiguousSymbolsEnabled = false, excludeSimilarCharacters = false;
+
+                //Check inputs
+                passwordLength = passwordIO.elements["passwordLength"].value;
+
+                if(passwordIO.elements["uppercaseInput"].checked){
+                    uppercaseEnabled = true;
+                }
+                if(passwordIO.elements["numbersInput"].checked){
+                    numbersEnabled = true;
+                }
+                if(passwordIO.elements["basicSymbolsInput"].checked){
+                    basicSymbolsEnabled = true;
+                }
+                if(passwordIO.elements["ambiguousSymbolsInput"].checked){
+                    ambiguousSymbolsEnabled = true;
+                }
+                if(passwordIO.elements["excludeSimilarInput"].checked){
+                    excludeSimilarCharacters = true;
+                }
+
+                //generate password based upon inputs
+                passwordIO.elements["output"].value = generatePassword(passwordLength,uppercaseEnabled,numbersEnabled,basicSymbolsEnabled,ambiguousSymbolsEnabled,excludeSimilarCharacters);
+            }
         </script>
     </head>
     <body>
-        <script type="text/javascript">
 
+        <form id="passwordIO">
+            Password Length:<br/>
+            <input type="number" name="passwordLength" min="1" max="50" value="16" class="numberInput"><br/><br/>
+
+            Would you like your password to:<br/>
+            <input checked type="checkbox" name="uppercaseInput"> Use Uppercase Letters? &emsp;&emsp;&ensp; A-Z <br/>
+            <input checked type="checkbox" name="numbersInput"> Use Numbers? &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 0-9 <br/>
+            <input checked type="checkbox" name="basicSymbolsInput"> Use Basic Symbols? &emsp;&emsp;&emsp;&ensp; ! @ # $ % ^ &amp; * ( ) - _ + = ? <br/>
+            <input type="checkbox" name="ambiguousSymbolsInput"> Use Ambiguous Symbols? &emsp; { } [ ] | \ / : ; " ' &#60; &#62; , .<br/>
+            <input checked type="checkbox" name="excludeSimilarInput"> Exclude Similar Characters? &nbsp; o O 0 l L i I | ' " , . : ; <br/><br/>
+            <input type="button" name="generate" value="Generate!" onclick="generatePasswordByInput()"><br/><br/>
+            
+            <input readonly type="text" name="output" class="passwordTextOutput">
+        </form>
+
+        <script type="text/javascript">
+            
         </script>
     </body>
 </html>
