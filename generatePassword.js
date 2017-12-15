@@ -2,8 +2,8 @@
 
 //MARK: Character Category Constructor
 function characterCategory(charCodes, similarCharacterCodes){
-    this.charCodes = charCodes;
-    this.count = 0;
+    this.charCodes  = charCodes;
+    this.count      = 0;
     this.candidates = [];
 
     var excludedCharCodes = [];
@@ -34,20 +34,20 @@ const ambiguousSymbolCodes = [123, 125, 91, 93, 124, 92, 47, 58, 59, 34, 39, 60,
 //similar characters: oO0lLiI'"|,.:;
 const similarCharacterCodes = [111, 79, 48, 108, 76, 105, 73, 39, 34, 124, 44, 46, 58, 59];
 
-var lowercase = new characterCategory(lowercaseCodes, similarCharacterCodes);
-var uppercase = new characterCategory(uppercaseCodes, similarCharacterCodes);
-var numbers = new characterCategory(numberCodes, similarCharacterCodes);
-var basicSymbols = new characterCategory(basicSymbolCodes, similarCharacterCodes);
+var lowercase        = new characterCategory(lowercaseCodes, similarCharacterCodes);
+var uppercase        = new characterCategory(uppercaseCodes, similarCharacterCodes);
+var numbers          = new characterCategory(numberCodes, similarCharacterCodes);
+var basicSymbols     = new characterCategory(basicSymbolCodes, similarCharacterCodes);
 var ambiguousSymbols = new characterCategory(ambiguousSymbolCodes, similarCharacterCodes);
 
 //MARK: Password Generation
 function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basicSymbolsEnabled, ambiguousSymbolsEnabled, excludeSimilarCharacters) {
     
     //reset characterCategory counts
-    lowercase.count = 0;
-    uppercase.count = 0;
-    numbers.count = 0;
-    basicSymbols.count = 0;
+    lowercase.count        = 0;
+    uppercase.count        = 0;
+    numbers.count          = 0;
+    basicSymbols.count     = 0;
     ambiguousSymbols.count = 0;
     
     //enabledCategories holds all characterCategories that may contribute candidates to the password
@@ -58,61 +58,60 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
     var passwordString = "";
 
     //determine which character code arrays to use; 'candidates' are the character codes that may be contributed to the password
-    if(excludeSimilarCharacters){
-        lowercase.candidates = lowercase.excludedCharCodes;
-        uppercase.candidates = uppercase.excludedCharCodes;
-        numbers.candidates = numbers.excludedCharCodes;
-        basicSymbols.candidates = basicSymbols.excludedCharCodes;
+    if (excludeSimilarCharacters){
+        lowercase.candidates        = lowercase.excludedCharCodes;
+        uppercase.candidates        = uppercase.excludedCharCodes;
+        numbers.candidates          = numbers.excludedCharCodes;
+        basicSymbols.candidates     = basicSymbols.excludedCharCodes;
         ambiguousSymbols.candidates = ambiguousSymbols.excludedCharCodes;
     }
-    else{
-        lowercase.candidates = lowercase.charCodes;
-        uppercase.candidates = uppercase.charCodes;
-        numbers.candidates = numbers.charCodes;
-        basicSymbols.candidates = basicSymbols.charCodes;
+    else {
+        lowercase.candidates        = lowercase.charCodes;
+        uppercase.candidates        = uppercase.charCodes;
+        numbers.candidates          = numbers.charCodes;
+        basicSymbols.candidates     = basicSymbols.charCodes;
         ambiguousSymbols.candidates = ambiguousSymbols.charCodes;
     }
 
     //fill enabledCategories with relevant characterCategories
     enabledCategories.push(lowercase);
-    if(uppercaseEnabled){
+    if (uppercaseEnabled){
         enabledCategories.push(uppercase);
     }
-    if(numbersEnabled){
+    if (numbersEnabled){
         enabledCategories.push(numbers);
     }
-    if(basicSymbolsEnabled){
+    if (basicSymbolsEnabled){
         enabledCategories.push(basicSymbols);
     }
-    if(ambiguousSymbolsEnabled){
+    if (ambiguousSymbolsEnabled){
         enabledCategories.push(ambiguousSymbols);
     }
 
     //determine count for each enabled category
     //first pass -- enabled charCategories are given counts 'randomly', their total counts are equal to the amount of characters in the password
-    for(i=0;i<passwordLength;i++){
+    for (i = 0; i < passwordLength; i++){
         enabledCategories[Math.floor(Math.random()*enabledCategories.length)].count++;
     }
 
     //second pass -- if an enabled charCategory has a count of zero, let it take up to half of the counts from the enabled charCategory with the greatest count 
-    for(category in enabledCategories){
-        if(category.count == 0){
+    for (category in enabledCategories){
+        if (category.count == 0){
             var indexWithGreatestCount = 0;
             //determine the index of the element in enabledCategories with the greatest count and assign it to indexWithGreatestCount
-            for(i=1;i<enabledCategories.length;i++){
-                if(enabledCategories[i] > enabledCategories[i-1]){
+            for (i = 1; i < enabledCategories.length; i++){
+                if (enabledCategories[i] > enabledCategories[i-1]){
                     indexWithGreatestCount = i;
                 }
             }
-            //FLAGGED FOR REVISION
             category.count = Number(1+(enabledCategories[indexWithGreatestCount].count)/2)*Math.random();
             enabledCategories[indexWithGreatestCount].count -= category.count;
         }
     }
 
     //choose character codes for password
-    for(i=0;i<enabledCategories.length;i++){
-        for(j=0;j<enabledCategories[i].count;j++){
+    for ( i = 0; i < enabledCategories.length; i++){
+        for(j = 0; j < enabledCategories[i].count; j++){
             password.push(enabledCategories[i].candidates[Math.floor(Math.random()*enabledCategories[i].candidates.length)]);
         }
     }
@@ -122,20 +121,20 @@ function generatePassword(passwordLength, uppercaseEnabled, numbersEnabled, basi
 
     while (0 !== currentIndex) {
         //pick an element (descending order from end of the array) and swap it with another element--that is "randomly" chosen
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = password[currentIndex];
+        randomIndex            = Math.floor(Math.random() * currentIndex);
+        currentIndex           -= 1;
+        temporaryValue         = password[currentIndex];
         password[currentIndex] = password[randomIndex];
-        password[randomIndex] = temporaryValue;
+        password[randomIndex]  = temporaryValue;
     }
 
     //peace day read zit stance
-    for(i=0;i<password.length;i++){
+    for (i = 0; i < password.length; i++){
         passwordString+=String.fromCharCode(password[i]);
     }
 
     //correct '<' and '>' for html if "passwordString" will be output to the html document via document.write
-    if(false){
+    if (false){
         passwordString = passwordString.replace("<","&#60;");
         passwordString = passwordString.replace(">","&#62;");
     }
